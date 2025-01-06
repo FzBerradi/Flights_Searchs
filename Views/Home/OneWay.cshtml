@@ -1,0 +1,101 @@
+﻿@model IEnumerable<Vol>
+@{
+    ViewData["Title"] = "Search Results";
+    ViewBag.Title = "Results";
+    var data = ViewBag.Message;
+    Vol vol = ViewBag.Vol;
+    Func<string, string> Duration = (d) => d.Substring(2, d.Length - 2).ToLower();
+}
+
+<!-- Title -->
+<div class="page-title" style="text-align: center; margin-top: 20px;">
+    <h1 style="font-size: 2rem; color: #333; font-weight: bold;">Searching Results Flight✈</h1>
+</div>
+
+<!-- Price Filter -->
+<div class="filters-container" style="display: flex; justify-content: center; align-items: center; margin-top: 20px; gap: 20px; flex-wrap: wrap;">
+    <label for="priceFilter" style="font-weight: bold; font-size: 1rem; color: #333; margin-right: 10px;">Filter by price :</label>
+    <select id="priceFilter" onchange="filterResultsByPrice()" style="padding: 10px 15px; border: 1px solid #ccc; border-radius: 5px; background-color: #fff; color: #333; font-size: 1rem; cursor: pointer; width: 200px;">
+        <option value="all" style="background-color: white; color: black;">Tous les Prix</option>
+        @{
+            var uniquePrices = new List<decimal>();
+            foreach (var obj in data.data)
+            {
+                var price = obj.price.total;
+                if (!uniquePrices.Contains((decimal)price))
+                {
+                    uniquePrices.Add((decimal)price);
+                }
+            }
+
+            foreach (var uniquePrice in uniquePrices)
+            {
+                <option value="@uniquePrice" style="background-color: white; color: black;">@uniquePrice</option>
+            }
+        }
+    </select>
+</div>
+@if (data.data.Count == 0)
+{
+    <div class="alert alert-warning text-center" role="alert">
+        No flights available for this date. Change your date and try again to see more options.    </div>
+}
+<!-- Flight Results -->
+<div class="results-container" style="margin-top: 30px; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+    @foreach (var obj in data.data)
+    {
+        @foreach (var it in obj.itineraries)
+        {
+            <div class="result-container" style="width: 45%; min-height: 350px; max-height: 350px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1); border-radius: 10px; background-color: #f9f9f9; position: relative;">
+                <!-- Flight Segments -->
+                @foreach (var seg in it.segments)
+                {
+                    <!-- Departure and Arrival Details -->
+                    <div class="flight-details" style="margin-bottom: 20px;">
+                        <p style="font-size: 1rem; color: #606060; margin-bottom: 5px;"><i class="fa fa-plane-departure"></i> Départ :</p>
+                        <h2 style="font-size: 1.2rem; color: #333; font-weight: bold;">@seg.departure.iataCode - @seg.departure.at.ToString("dd/MM/yyyy HH:mm")</h2>
+
+                        <p style="font-size: 1rem; color: #606060; margin-top: 15px; margin-bottom: 5px;"><i class="fa fa-plane-arrival"></i> Arrivée :</p>
+                        <h2 style="font-size: 1.2rem; color: #333; font-weight: bold;">@seg.arrival.iataCode - @seg.arrival.at.ToString("dd/MM/yyyy HH:mm")</h2>
+                    </div>
+
+                    <!-- Flight Information -->
+                    <div style="border-top: 1px solid #ccc; margin-top: 15px; padding-top: 10px;">
+                        <!-- Flight Number -->
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="font-size: 0.9rem; color: rosybrown; display: flex; align-items: center;">
+                                <i class="fas fa-ticket-alt" style="margin-right: 8px;"></i> Numéro de vol : <strong>@seg.number</strong>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                <br><br>
+                <!-- Price Section -->
+                <div style="position: absolute; bottom: 30px; right: 10%; transform: translateX(0); background-color: rosybrown; border-radius: 6px; padding: 5px 10px; width: auto; text-align: left; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-euro-sign" style="font-size: 1.2rem; color: white;"></i>
+                    <h4 style="font-size: 1rem; color: white; font-weight: 500; margin: 0;">
+                        @obj.price.total @obj.price.currency
+                    </h4>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<script>
+    function filterResultsByPrice() {
+        var priceFilter = document.getElementById('priceFilter').value;
+        var divs = document.getElementsByClassName('result-container');
+
+        for (var i = 0; i < divs.length; i++) {
+            var priceElement = divs[i].getElementsByTagName('h4')[0];
+            var priceValue = priceElement.textContent || priceElement.innerText;
+
+            if (priceFilter === 'all' || priceValue.includes(priceFilter)) {
+                divs[i].style.display = '';
+            } else {
+                divs[i].style.display = 'none';
+            }
+        }
+    }
+</script>

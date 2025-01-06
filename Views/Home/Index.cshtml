@@ -1,0 +1,297 @@
+﻿@model Vol_Search_DotNet.Models.Vol
+@using Microsoft.AspNetCore.Mvc.ModelBinding
+
+@{
+	ViewData["Title"] = "Flights";
+}
+<div style="background-image: url('./images/avion.jpeg'); background-size: cover; background-position: center; padding: 40px; color: white; font-family: 'Arial', sans-serif; min-height: 100vh; opacity: 0.8;">
+	<div class="container">
+		<div style="text-align: center; margin-bottom: 30px;">
+			<h1 style="margin: 0; font-size: 2rem;">Welcome to Flight Searching</h1>
+			<p style="font-size: 1.2rem;">Plan your journey with ease and comfort</p>
+		</div>
+		<div class="form-container" style="background-image: url('./images/vols.jpg'); background-size: cover; background-position: center; padding: 30px; border-radius: 10px; color: #fff; backdrop-filter: blur(5px);">
+			<form asp-controller="Home" asp-action="Result" method="post">
+				<div class="form-row">
+					<div class="form-group">
+						<label for="flight-type">Flight Type:</label>
+						<select id="flight-type" name="flight_type" onchange="toggleReturnDate(this)" required>
+							<option value="Roundtrip">Roundtrip</option>
+							<option value="One way">One Way</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label style="font-weight: bold;">Departure City:</label>
+						<input style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" type="text" name="departure" class="city1" value="Enter departure city" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Enter departure city';}" id="departure" required>
+					</div>
+					<div class="form-group">
+						<label style="font-weight: bold;">Arrival City:</label>
+						<input style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" type="text" name="arrival" class="city2" value="Enter arrival city" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Enter arrival city';}" id="arriver" required>
+					</div>
+					<div class="form-group">
+						<label for="departureDate">Departure Date:</label>
+						<input type="date" id="departureDate" name="flight_date_d" min="@DateTime.Now.ToString("yyyy-MM-dd")" required>
+					</div>
+				</div>
+				
+
+				<div class="form-row" id="second-row">
+					<div class="form-group" id="return-date-group">
+						<label for="returnDate">Return Date:</label>
+						<input type="date" id="returnDate" name="flight_date_a" min="@DateTime.Now.ToString("yyyy-MM-dd")">
+					</div>
+					<div class="form-group">
+						<label for="travel_class">Travel Class:</label>
+						<select id="travel_class" name="travel_class" required>
+							<option value="ECONOMY">Economy</option>
+							<option value="PREMIUM_ECONOMY">Premium Economy</option>
+							<option value="BUSINESS">Business</option>
+							<option value="FIRST">First Class</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="adults">Number of People:</label>
+						<select id="adults" name="adults">
+							@for (int i = 0; i <= 7; i++)
+							{
+								<option value="@i">@i</option>
+							}
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="non_stop">Non-Stop:</label>
+						<select id="non_stop" name="non_stop" required>
+							<option value="true">Non-Stop</option>
+							<option value="false">With Stops</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-row" style="display: flex; justify-content: center; margin-top: 20px;">
+					<button type="submit" class="submit-btn" style="
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        border-radius: 30px;
+        background-color: transparent;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);">
+						<i class="fa fa-plane" style="margin-right: 10px;"></i> <!-- Icone d'avion -->
+						Search Flights
+					</button>
+				</div>
+			</form>
+
+			<script>
+				function toggleReturnDate(select) {
+					const returnDateGroup = document.getElementById('return-date-group');
+					const secondRow = document.getElementById('second-row');
+					if (select.value === 'One way') {
+						returnDateGroup.style.display = 'none';
+						secondRow.style.gridTemplateColumns = '1fr 1fr'; // Two columns for Travel Class and Number of People
+					} else {
+						returnDateGroup.style.display = 'block';
+						secondRow.style.gridTemplateColumns = '1fr 1fr 1fr'; // Three columns for all fields
+					}
+				}
+
+				document.addEventListener('DOMContentLoaded', () => {
+					toggleReturnDate(document.getElementById('flight-type'));
+				});
+			</script>
+
+		</div>
+	</div>
+</div>
+
+
+<section class="section">
+	<div class="options">
+		<!-- Marrakech Image -->
+		<div class="option">
+			<div class="image" style="background-image:url('./images/marrakech.jpg');"></div>
+			<div class="option-content">
+				<div class="icon">
+					<i class="fas fa-plane-departure"></i>
+				</div>
+				<div class="info">
+					<h3 class="main">Marrakech</h3>
+					<p class="sub">Explore the vibrant streets and historical landmarks of Marrakech.</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="option">
+			<div class="image" style="background-image:url('./images/tanger.jpg');"></div>
+			<div class="option-content">
+				<div class="icon">
+					<i class="fas fa-plane-arrival"></i>
+				</div>
+				<div class="info">
+					<h3 class="main">Tanger</h3>
+					<p class="sub">Discover the Mediterranean beauty and rich culture of Tanger.</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="option">
+			<div class="image" style="background-image:url('./images/london.jpg');"></div>
+			<div class="option-content">
+				<div class="icon">
+					<i class="fas fa-plane-departure"></i>
+				</div>
+				<div class="info">
+					<h3 class="main">London</h3>
+					<p class="sub">Experience the grandeur and history of London’s iconic landmarks.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.section {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 50px;
+	}
+	.options {
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap; 
+		gap: 20px; 
+		width: 100%;
+		max-width: 1200px; 
+	}
+
+	.option {
+		position: relative;
+		width: 23%; 
+		height: 300px;
+		background-size: cover;
+		background-position: center;
+		border-radius: 10px;
+		overflow: hidden;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		transition: transform 0.3s ease; 
+	}
+
+	.option:hover {
+		transform: scale(1.05); 
+	}
+
+	.image {
+		width: 100%;
+		height: 100%;
+		background-size: cover;
+		background-position: center;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+
+	.option-content {
+		position: absolute;
+		bottom: 20px;
+		left: 20px;
+		color: white;
+		z-index: 2;
+		background-color: rgba(0, 0, 0, 0.5); 
+		padding: 15px;
+		border-radius: 10px;
+		width: 90%;
+	}
+
+	.option-content .icon {
+		font-size: 28px; 
+		margin-bottom: 10px;
+	}
+
+	.option-content .main {
+		font-size: 22px;
+		font-weight: bold;
+		margin-bottom: 8px;
+	}
+
+	.option-content .sub {
+		font-size: 14px;
+	}
+</style>
+
+
+
+<style>
+	.form-container {
+		background-color: rgba(255, 255, 255, 0.1);
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	}
+
+	.form-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 15px;
+		justify-content: space-between;
+		margin-bottom: 20px;
+	}
+
+	.form-group {
+		flex: 1 1 calc(25% - 15px); 
+		min-width: 220px;
+	}
+
+	.form-group label {
+		font-weight: bold;
+		margin-bottom: 5px;
+		display: block;
+		color: #fff;
+	}
+
+	.form-group input,
+	.form-group select {
+		width: 100%;
+		padding: 8px;
+		border-radius: 5px;
+		border: 1px solid #ccc;
+		background: rgba(255, 255, 255, 0.8);
+		color: #333;
+	}
+</style>
+<footer style="background-color: rosybrown; color: white; padding: 40px 20px; font-family: 'Arial', sans-serif;">
+    <div class="container" style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px;">
+        <!-- About Section -->
+        <div style="flex: 1; min-width: 250px; margin-left: -50px;">
+            <h3 style="margin-bottom: 10px; font-size: 1.2rem; border-bottom: 2px solid white; display: inline-block;">About Us</h3>
+            <p style="line-height: 1.5;">
+                Welcome to our Flight Searching System. We aim to provide a seamless experience for searching your flights with comfort and reliability.
+            </p>
+        </div>
+        <!-- Quick Links -->
+        <div style="flex: 1; min-width: 250px;">
+            <h3 style="margin-bottom: 10px; font-size: 1.2rem; border-bottom: 2px solid white; display: inline-block;">Quick Links</h3>
+            <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                <li><a href="/" style="color: white; text-decoration: none;">Home</a></li>
+	            <li><a href="@Url.Action("About", "Home")" style="color: white; text-decoration: none;">About</a></li>
+                <li><a href="/contact" style="color: white; text-decoration: none;">Contact</a></li>
+                <li><a href="/privacy" style="color: white; text-decoration: none;">Privacy Policy</a></li>
+            </ul>
+        </div>
+        <div style="flex: 1; min-width: 250px;">
+            <h3 style="margin-bottom: 10px; font-size: 1.2rem; border-bottom: 2px solid white; display: inline-block;">Contact Us</h3>
+            <p style="line-height: 1.5;">
+                <strong>Email:</strong> support@flightsystem.com <br>
+                <strong>Phone:</strong> +212 567890199 <br>
+                <strong>Address:</strong> 123 Flight Street, Tetouan, Morocco
+            </p>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px; border-top: 1px solid white; padding-top: 20px; font-size: 0.9rem;">
+        &copy; 2024 Flight Searching System. All rights reserved.
+    </div>
+</footer>
